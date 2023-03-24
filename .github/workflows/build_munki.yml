@@ -3,8 +3,8 @@ name: Build Munki (Manual)
 env:
   APP_SIGNING_IDENTITY: "Developer ID Application: Mac Admins Open Source (T4SK8ZXCXG)"
   INSTALLER_SIGNING_IDENTITY: "Developer ID Installer: Mac Admins Open Source (T4SK8ZXCXG)"
-  REVISION: 4e35f56b9c19d3dff3dc1bd85c634cbc1b507938 # hardcoded for now until we figure out how we want to tackle this - v6.2.1
-  VERSION: 6.2.1
+  REVISION: d2bb52281c3e8da6564468f905403239d6691968 # hardcoded for now until we figure out how we want to tackle this - v6.2.1
+  VERSION: "6.3.0b3"
 
 on: [workflow_dispatch]
 
@@ -57,7 +57,7 @@ jobs:
       with:
         name: Munki v${{env.MUNKI_VERSION}}
         tag_name: v${{env.VERSION}}
-        draft: true
+        draft: false
         prerelease: true
         token: ${{ secrets.GITHUB_TOKEN }}
         body: |
