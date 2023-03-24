@@ -41,8 +41,7 @@ jobs:
     - name: get environment variables
       id: get_env_var
       run: |
-         echo "${$(find . -type f -name "*.pkg" | sed 's/[^\-]*-//')%.*}" > ./build_info.txt
-         echo "MUNKI_VERSION=$(/bin/cat ./build_info.txt)" >> $GITHUB_ENV
+         echo "MUNKI_VERSION=$(find . -type f -name "*.pkg" | sed 's/[^\-]*-//' | sed 's/\.[^.]*$//')" >> $GITHUB_ENV
 
     - name: Generate changelog
       if: ${{ false }} # disable job or now
