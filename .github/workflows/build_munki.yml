@@ -17,7 +17,6 @@ jobs:
       uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0
       with:
         fetch-depth: 0
-        path: main
         ref: ${{env.REVISION}}
         repository: munki/munki
 
