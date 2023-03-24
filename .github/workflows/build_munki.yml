@@ -35,16 +35,14 @@ jobs:
         p12-file-base64: ${{ secrets.PKG_CERTIFICATES_P12_MAOS }}
         p12-password: ${{ secrets.PKG_CERTIFICATES_P12_PASSWORD_MAOS }}
 
-    - name: find the path
-      run: ls -la ./
-
     - name: Build munki package
       run: ./code/tools/make_munki_mpkg.sh -p -S "$APP_SIGNING_IDENTITY" -s "$INSTALLER_SIGNING_IDENTITY"
     
     - name: get environment variables
       id: get_env_var
       run: |
-         echo -n "MUNKI_VERSION=${$(find . -type f -name "*.pkg" | sed 's/[^\-]*-//')%.*}" >> $GITHUB_ENV
+         echo "${$(find . -type f -name "*.pkg" | sed 's/[^\-]*-//')%.*}" > ./build_info.txt
+         echo "MUNKI_VERSION=$(/bin/cat ./build_info.txt)" >> $GITHUB_ENV
 
     - name: Generate changelog
       if: ${{ false }} # disable job or now
