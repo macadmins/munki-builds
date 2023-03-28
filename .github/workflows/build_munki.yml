@@ -3,8 +3,10 @@ name: Build Munki (Manual)
 env:
   APP_SIGNING_IDENTITY: "Developer ID Application: Mac Admins Open Source (T4SK8ZXCXG)"
   INSTALLER_SIGNING_IDENTITY: "Developer ID Installer: Mac Admins Open Source (T4SK8ZXCXG)"
+  NOTARY_APP_PASSWORD: ${{ secrets.NOTARY_APP_PASSWORD_MAOS }}
   REVISION: d2bb52281c3e8da6564468f905403239d6691968 # hardcoded for now until we figure out how we want to tackle this - v6.2.1
   VERSION: "6.3.0-beta"
+  XCODE_PATH: "/Applications/Xcode_14.2.app"
 
 on: [workflow_dispatch]
 
@@ -36,12 +38,17 @@ jobs:
         p12-password: ${{ secrets.PKG_CERTIFICATES_P12_PASSWORD_MAOS }}
 
     - name: Build munki package
-      run: ./code/tools/make_munki_mpkg.sh -p -S "$APP_SIGNING_IDENTITY" -s "$INSTALLER_SIGNING_IDENTITY"
-    
-    - name: get environment variables
-      id: get_env_var
       run: |
-         echo "MUNKI_VERSION=$(find . -type f -name "*.pkg" | sed 's/[^\-]*-//' | sed 's/\.[^.]*$//')" >> $GITHUB_ENV
+        ./code/tools/make_munki_mpkg.sh -p -S "$APP_SIGNING_IDENTITY" -s "$INSTALLER_SIGNING_IDENTITY"
+        echo "MUNKI_PKG_PATH=$(find . -type f -name "*.pkg")" >> $GITHUB_ENV
+        echo "MUNKI_VERSION=$(find . -type f -name "*.pkg" | sed 's/[^\-]*-//' | sed 's/\.[^.]*$//')" >> $GITHUB_ENV
+    
+    - name: Notarize and staple package
+      id: notarize_and_staple
+      run: |
+        "$XCODE_PATH/Contents/Developer/usr/bin/notarytool" store-credentials --apple-id "opensource@macadmins.io" --team-id "T4SK8ZXCXG" --password "$NOTARY_APP_PASSWORD" munki
+        "$XCODE_PATH/Contents/Developer/usr/bin/notarytool" submit "$MUNKI_PKG_PATH" --keychain-profile "munki" --wait
+        "$XCODE_PATH/Contents/Developer/usr/bin/stapler" staple "$MUNKI_PKG_PATH"
 
     - name: Generate changelog
       if: ${{ false }} # disable job or now
