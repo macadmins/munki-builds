@@ -47,16 +47,17 @@ jobs:
     - name: Build munki package
       run: |
         cp ./munki-builds/make_munki_mpkg.sh ./munki/code/tools/make_munki_mpkg.sh
-        cd ./munki && ./code/tools/make_munki_mpkg.sh -p -S "$APP_SIGNING_IDENTITY" -s "$INSTALLER_SIGNING_IDENTITY"
-        echo "MUNKI_PKG_PATH=$(find ./munki -type f -name "*.pkg")" >> $GITHUB_ENV
-        echo "MUNKI_VERSION=$(find ./munki -type f -name "*.pkg" | sed 's/[^\-]*-//' | sed 's/\.[^.]*$//')" >> $GITHUB_ENV
+        cd ./munki
+        ./code/tools/make_munki_mpkg.sh -p -S "$APP_SIGNING_IDENTITY" -s "$INSTALLER_SIGNING_IDENTITY"
+        echo "MUNKI_PKG_PATH=$(find . -type f -name "*.pkg")" >> $GITHUB_ENV
+        echo "MUNKI_VERSION=$(find . -type f -name "*.pkg" | sed 's/[^\-]*-//' | sed 's/\.[^.]*$//')" >> $GITHUB_ENV
     
     - name: Notarize and staple package
       id: notarize_and_staple
       run: |
         "$XCODE_PATH/Contents/Developer/usr/bin/notarytool" store-credentials --apple-id "opensource@macadmins.io" --team-id "T4SK8ZXCXG" --password "$NOTARY_APP_PASSWORD" munki
-        "$XCODE_PATH/Contents/Developer/usr/bin/notarytool" submit "$MUNKI_PKG_PATH" --keychain-profile "munki" --wait
-        "$XCODE_PATH/Contents/Developer/usr/bin/stapler" staple "$MUNKI_PKG_PATH"
+        "$XCODE_PATH/Contents/Developer/usr/bin/notarytool" submit "./munki/$MUNKI_PKG_PATH" --keychain-profile "munki" --wait
+        "$XCODE_PATH/Contents/Developer/usr/bin/stapler" staple "./munki/$MUNKI_PKG_PATH"
 
     - name: Generate changelog
       if: ${{ false }} # disable job or now
