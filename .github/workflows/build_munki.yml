@@ -47,7 +47,7 @@ jobs:
     - name: Build munki package
       run: |
         cp ./munki-builds/make_munki_mpkg.sh ./munki/code/tools/make_munki_mpkg.sh
-        ./munki/code/tools/make_munki_mpkg.sh -p -S "$APP_SIGNING_IDENTITY" -s "$INSTALLER_SIGNING_IDENTITY"
+        cd ./munki && ./code/tools/make_munki_mpkg.sh -p -S "$APP_SIGNING_IDENTITY" -s "$INSTALLER_SIGNING_IDENTITY"
         echo "MUNKI_PKG_PATH=$(find ./munki -type f -name "*.pkg")" >> $GITHUB_ENV
         echo "MUNKI_VERSION=$(find ./munki -type f -name "*.pkg" | sed 's/[^\-]*-//' | sed 's/\.[^.]*$//')" >> $GITHUB_ENV
     
