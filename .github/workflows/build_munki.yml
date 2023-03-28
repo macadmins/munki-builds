@@ -15,10 +15,17 @@ jobs:
     runs-on: macos-12
 
     steps:
+    - name: Checkout repo
+      uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0
+      with:
+        fetch-depth: 0
+        path: munki-builds
+
     - name: Checkout munki repo
       uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0
       with:
         fetch-depth: 0
+        path: munki
         ref: ${{env.REVISION}}
         repository: munki/munki
 
@@ -39,9 +46,10 @@ jobs:
 
     - name: Build munki package
       run: |
-        ./code/tools/make_munki_mpkg.sh -p -S "$APP_SIGNING_IDENTITY" -s "$INSTALLER_SIGNING_IDENTITY"
-        echo "MUNKI_PKG_PATH=$(find . -type f -name "*.pkg")" >> $GITHUB_ENV
-        echo "MUNKI_VERSION=$(find . -type f -name "*.pkg" | sed 's/[^\-]*-//' | sed 's/\.[^.]*$//')" >> $GITHUB_ENV
+        cp ./munki-builds/make_munki_mpkg.sh ./munki/code/tools/make_munki_mpkg.sh
+        ./munki/code/tools/make_munki_mpkg.sh -p -S "$APP_SIGNING_IDENTITY" -s "$INSTALLER_SIGNING_IDENTITY"
+        echo "MUNKI_PKG_PATH=$(find ./munki -type f -name "*.pkg")" >> $GITHUB_ENV
+        echo "MUNKI_VERSION=$(find ./munki -type f -name "*.pkg" | sed 's/[^\-]*-//' | sed 's/\.[^.]*$//')" >> $GITHUB_ENV
     
     - name: Notarize and staple package
       id: notarize_and_staple
@@ -69,4 +77,4 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         body: |
             This is a test for now
-        files: ${{github.workspace}}/*.pkg
+        files: ${{github.workspace}}/munki/*.pkg
