@@ -555,30 +555,28 @@ if [ "$APPSIGNINGCERT" != "" ]; then
     echo "Signing Managed Software Center.app Bundles..."
     /usr/bin/codesign -f -s "$APPSIGNINGCERT" --options runtime --timestamp --verbose \
         "$APPROOT/Applications/Managed Software Center.app/Contents/PlugIns/MSCDockTilePlugin.docktileplugin" \
-        "$APPROOT/Applications/Managed Software Center.app/Contents/Resources/munki-notifier.app" \
+        "$APPROOT/Applications/Managed Software Center.app/Contents/Resources/munki-notifier.app"
     SIGNING_RESULT="$?"
     if [ "$SIGNING_RESULT" -ne 0 ]; then
         echo "Error signing Managed Software Center.app: $SIGNING_RESULT"
         exit 2
     fi
-fi
 
-echo "Signing MunkiStatus.app Frameworks..."
-/usr/bin/find "$APPROOT/Applications/Managed Software Center.app/Contents/Resources/MunkiStatus.app/Contents/Frameworks" -type f -perm -u=x -exec /usr/bin/codesign -f -s "$APPSIGNINGCERT" --options runtime --timestamp --verbose {} \;
-SIGNING_RESULT="$?"
-if [ "$SIGNING_RESULT" -ne 0 ]; then
-    echo "Error signing MunkiStatus.app Frameworks: $SIGNING_RESULT"
-    exit 2
-fi
-echo "Signing Managed Software Center.app Frameworks..."
-/usr/bin/find "$APPROOT/Applications/Managed Software Center.app/Contents/Frameworks" -type f -perm -u=x -exec /usr/bin/codesign -f -s "$APPSIGNINGCERT" --options runtime --timestamp --verbose {} \;
-SIGNING_RESULT="$?"
-if [ "$SIGNING_RESULT" -ne 0 ]; then
-    echo "Error signing Managed Software Center.app Frameworks: $SIGNING_RESULT"
-    exit 2
-fi
+    echo "Signing MunkiStatus.app Frameworks..."
+    /usr/bin/find "$APPROOT/Applications/Managed Software Center.app/Contents/Resources/MunkiStatus.app/Contents/Frameworks" -type f -perm -u=x -exec /usr/bin/codesign -f -s "$APPSIGNINGCERT" --options runtime --timestamp --verbose {} \;
+    SIGNING_RESULT="$?"
+    if [ "$SIGNING_RESULT" -ne 0 ]; then
+        echo "Error signing MunkiStatus.app Frameworks: $SIGNING_RESULT"
+        exit 2
+    fi
+    echo "Signing Managed Software Center.app Frameworks..."
+    /usr/bin/find "$APPROOT/Applications/Managed Software Center.app/Contents/Frameworks" -type f -perm -u=x -exec /usr/bin/codesign -f -s "$APPSIGNINGCERT" --options runtime --timestamp --verbose {} \;
+    SIGNING_RESULT="$?"
+    if [ "$SIGNING_RESULT" -ne 0 ]; then
+        echo "Error signing Managed Software Center.app Frameworks: $SIGNING_RESULT"
+        exit 2
+    fi
 
-if [ "$APPSIGNINGCERT" != "" ]; then
     echo "Signing Managed Software Center.app..."
     /usr/bin/codesign -f -s "$APPSIGNINGCERT" --options runtime --timestamp --verbose \
         "$APPROOT/Applications/Managed Software Center.app/Contents/Resources/MunkiStatus.app" \
