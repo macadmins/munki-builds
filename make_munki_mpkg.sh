@@ -681,12 +681,13 @@ mkdir -m 755 "$PYTHONROOT/usr/local/munki"
 cp -R "$MUNKIROOT/Python.framework" "$PYTHONROOT/usr/local/munki/"
 
 # Sign Python
-/usr/bin/find "$PYTHONROOT/usr/local/munki/Python.framework/Versions/Current/bin" -type f -perm -u=x -exec /usr/bin/codesign --sign "$APPSIGNINGCERT" --timestamp --preserve-metadata=identifier,entitlements,flags,runtime -f {} \;
-/usr/bin/find "$PYTHONROOT/usr/local/munki/Python.framework/Versions/Current/lib" -type f -perm -u=x -exec /usr/bin/codesign --sign "$APPSIGNINGCERT" --timestamp --preserve-metadata=identifier,entitlements,flags,runtime -f {} \;
-/usr/bin/find "$PYTHONROOT/usr/local/munki/Python.framework/Versions/Current/lib" -type f -name "*dylib" -exec /usr/bin/codesign --sign "$APPSIGNINGCERT" --timestamp --preserve-metadata=identifier,entitlements,flags,runtime -f {} \;
-/usr/bin/codesign --sign "$APPSIGNINGCERT" --timestamp --deep --force --preserve-metadata=identifier,entitlements,flags,runtime "$PYTHONROOT/usr/local/munki/Python.framework/Versions/Current/Resources/Python.app"
-/usr/bin/codesign --sign "$APPSIGNINGCERT" --timestamp --force --preserve-metadata=identifier,entitlements,flags,runtime "$PYTHONROOT/usr/local/munki/Python.framework/Versions/Current/Python"
-
+if [ "$APPSIGNINGCERT" != "" ]; then
+    /usr/bin/find "$PYTHONROOT/usr/local/munki/Python.framework/Versions/Current/bin" -type f -perm -u=x -exec /usr/bin/codesign --sign "$APPSIGNINGCERT" --timestamp --preserve-metadata=identifier,entitlements,flags,runtime -f {} \;
+    /usr/bin/find "$PYTHONROOT/usr/local/munki/Python.framework/Versions/Current/lib" -type f -perm -u=x -exec /usr/bin/codesign --sign "$APPSIGNINGCERT" --timestamp --preserve-metadata=identifier,entitlements,flags,runtime -f {} \;
+    /usr/bin/find "$PYTHONROOT/usr/local/munki/Python.framework/Versions/Current/lib" -type f -name "*dylib" -exec /usr/bin/codesign --sign "$APPSIGNINGCERT" --timestamp --preserve-metadata=identifier,entitlements,flags,runtime -f {} \;
+    /usr/bin/codesign --sign "$APPSIGNINGCERT" --timestamp --deep --force --preserve-metadata=identifier,entitlements,flags,runtime "$PYTHONROOT/usr/local/munki/Python.framework/Versions/Current/Resources/Python.app"
+    /usr/bin/codesign --sign "$APPSIGNINGCERT" --timestamp --force --preserve-metadata=identifier,entitlements,flags,runtime "$PYTHONROOT/usr/local/munki/Python.framework/Versions/Current/Python"
+fi
 # Create symlink
 ln -s Python.framework/Versions/Current/bin/python3 "$PYTHONROOT/usr/local/munki/munki-python"
 
