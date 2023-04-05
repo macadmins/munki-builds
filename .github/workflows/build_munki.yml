@@ -4,8 +4,7 @@ env:
   APP_SIGNING_IDENTITY: "Developer ID Application: Mac Admins Open Source (T4SK8ZXCXG)"
   INSTALLER_SIGNING_IDENTITY: "Developer ID Installer: Mac Admins Open Source (T4SK8ZXCXG)"
   NOTARY_APP_PASSWORD: ${{ secrets.NOTARY_APP_PASSWORD_MAOS }}
-  REVISION: d2bb52281c3e8da6564468f905403239d6691968 # hardcoded for now until we figure out how we want to tackle this - v6.2.1
-  VERSION: "6.3.0-beta"
+  REVISION: 6c27df483175787be2c6ccf219e61fa606900112 # hardcoded for now until we figure out how we want to tackle this - v6.2.1
   XCODE_PATH: "/Applications/Xcode_14.2.app"
 
 on: [workflow_dispatch]
@@ -46,7 +45,6 @@ jobs:
 
     - name: Build munki package
       run: |
-        cp ./munki-builds/make_munki_mpkg.sh ./munki/code/tools/make_munki_mpkg.sh
         cd ./munki
         ./code/tools/make_munki_mpkg.sh -p -S "$APP_SIGNING_IDENTITY" -s "$INSTALLER_SIGNING_IDENTITY"
         echo "MUNKI_PKG_PATH=$(find . -type f -name "*.pkg")" >> $GITHUB_ENV
@@ -71,11 +69,11 @@ jobs:
       id: create_release
       uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844 # v0.1.15
       with:
-        name: Munki v${{env.MUNKI_VERSION}}
-        tag_name: v${{env.VERSION}}
+        name: Munki v${{env.MUNKI_VERSION}} Beta
+        tag_name: v${{env.MUNKI_VERSION}}
         draft: false
         prerelease: true
         token: ${{ secrets.GITHUB_TOKEN }}
         body: |
-            This is a test for now
+            This is a signed and notarized build of munki
         files: ${{github.workspace}}/munki/*.pkg
