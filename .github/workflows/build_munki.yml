@@ -5,13 +5,13 @@ env:
   INSTALLER_SIGNING_IDENTITY: "Developer ID Installer: Mac Admins Open Source (T4SK8ZXCXG)"
   NOTARY_APP_PASSWORD: ${{ secrets.NOTARY_APP_PASSWORD_MAOS }}
   REVISION: 55ab80b38bd41376c27a4d9cd6c99ea303174bd4 # hardcoded for now until we figure out how we want to tackle this - v6.3.5
-  XCODE_PATH: "/Applications/Xcode_14.2.app"
+  XCODE_PATH: "/Applications/Xcode_14.3.1.app"
 
 on: [workflow_dispatch]
 
 jobs:
   build:
-    runs-on: macos-12
+    runs-on: macos-13
 
     steps:
     - name: Checkout repo
