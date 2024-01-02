@@ -4,7 +4,7 @@ env:
   APP_SIGNING_IDENTITY: "Developer ID Application: Mac Admins Open Source (T4SK8ZXCXG)"
   INSTALLER_SIGNING_IDENTITY: "Developer ID Installer: Mac Admins Open Source (T4SK8ZXCXG)"
   NOTARY_APP_PASSWORD: ${{ secrets.NOTARY_APP_PASSWORD_MAOS }}
-  REVISION: 8134cedbc2aca8ff4a842fb8cfd656233ee3c650 # hardcoded for now until we figure out how we want to tackle this - v6.3.5
+  REVISION: 150418ff4e61e5945386c19718af641eeb31ce67 # hardcoded for now until we figure out how we want to tackle this - v6.4.0
   XCODE_PATH: "/Applications/Xcode_14.3.1.app"
 
 on: [workflow_dispatch]
