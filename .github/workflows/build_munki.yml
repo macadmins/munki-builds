@@ -43,6 +43,9 @@ jobs:
         p12-file-base64: ${{ secrets.PKG_CERTIFICATES_P12_MAOS }}
         p12-password: ${{ secrets.PKG_CERTIFICATES_P12_PASSWORD_MAOS }}
 
+    - name: Set Xcode Version
+      run: sudo xcode-select -s "$XCODE_PATH"
+
     - name: Build munki package
       run: |
         cd ./munki
