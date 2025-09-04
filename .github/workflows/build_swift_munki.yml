@@ -4,7 +4,7 @@ env:
   APP_SIGNING_IDENTITY: "Developer ID Application: Mac Admins Open Source (T4SK8ZXCXG)"
   INSTALLER_SIGNING_IDENTITY: "Developer ID Installer: Mac Admins Open Source (T4SK8ZXCXG)"
   NOTARY_APP_PASSWORD: ${{ secrets.NOTARY_APP_PASSWORD_MAOS }}
-  REVISION: bf892e2035ab5ac7ed43062ef0ca995568e8dae6 #  -- (Munki7dev) hardcoded for now until we figure out how we want to tackle this
+  REVISION: bf892e2035ab5ac7ed43062ef0ca995568e8dae6 #  -- (Munki7dev: v7.0.0b11) hardcoded for now until we figure out how we want to tackle this
   XCODE_PATH: "/Applications/Xcode_26.0.app"
 
 on: [workflow_dispatch]
@@ -75,8 +75,8 @@ jobs:
         name: Munki v${{env.MUNKI_VERSION}}
         tag_name: v${{env.MUNKI_VERSION}}
         draft: false
-        prerelease: false
+        prerelease: true
         token: ${{ secrets.GITHUB_TOKEN }}
         body: |
-            This is a signed and notarized build of Munki
+            This is a signed and notarized beta build of Munki 7.
         files: ${{github.workspace}}/munki/*.pkg
