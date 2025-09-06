@@ -1,0 +1,34 @@
+name: Test actool (Manual)
+
+env:
+  REVISION: 5737016794a275d586687704324a857ef0ef69f4 #  -- (Munki7dev) hardcoded for now until we figure out how we want to tackle this
+  XCODE_PATH: "/Applications/Xcode_26.0.app"
+
+on: [workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: macos-15
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      with:
+        fetch-depth: 0
+        path: munki-builds
+
+    - name: Checkout munki repo
+      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      with:
+        fetch-depth: 0
+        path: munki
+        ref: ${{env.REVISION}}
+        repository: munki/munki
+
+    - name: Set Xcode Version
+      run: sudo xcode-select -s "$XCODE_PATH"
+
+    - name: Test actool
+      run: |
+        cd ./munki
+        ./code/tools/github_action_test.sh
