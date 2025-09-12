@@ -4,14 +4,14 @@ env:
   APP_SIGNING_IDENTITY: "Developer ID Application: Mac Admins Open Source (T4SK8ZXCXG)"
   INSTALLER_SIGNING_IDENTITY: "Developer ID Installer: Mac Admins Open Source (T4SK8ZXCXG)"
   NOTARY_APP_PASSWORD: ${{ secrets.NOTARY_APP_PASSWORD_MAOS }}
-  REVISION: 640f535ca1b6c33dfe8339e543ce4c2ffc3817a9 #  -- (Munki7dev) hardcoded for now until we figure out how we want to tackle this
+  REVISION: fd017d1824b6afcf88780f1789e3966307ac8cd5 #  -- (no-supervisor-test) hardcoded for now until we figure out how we want to tackle this
   XCODE_PATH: "/Applications/Xcode_26.0.app"
 
 on: [workflow_dispatch]
 
 jobs:
   build:
-    runs-on: macos-15
+    runs-on: macos-26
 
     steps:
     - name: Checkout repo
