@@ -4,7 +4,7 @@ env:
   APP_SIGNING_IDENTITY: "Developer ID Application: Mac Admins Open Source (T4SK8ZXCXG)"
   INSTALLER_SIGNING_IDENTITY: "Developer ID Installer: Mac Admins Open Source (T4SK8ZXCXG)"
   NOTARY_APP_PASSWORD: ${{ secrets.NOTARY_APP_PASSWORD_MAOS }}
-  REVISION: 3ab392727c62c16f520e38494c693c0aa044e7f8 #  -- (Munki7dev) hardcoded for now
+  REVISION: c454bee48b003f0c0d835b7df976deec873a7c36 #  -- (Munki7dev) hardcoded for now
   XCODE_PATH: "/Applications/Xcode_26.0.app"
 
 on: [workflow_dispatch]
