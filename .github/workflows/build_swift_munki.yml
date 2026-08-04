@@ -15,13 +15,13 @@ jobs:
 
     steps:
     - name: Checkout repo
-      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      uses: actions/checkout@v6.1.0
       with:
         fetch-depth: 0
         path: munki-builds
 
     - name: Checkout munki repo
-      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      uses: actions/checkout@v6.1.0
       with:
         fetch-depth: 0
         path: munki
@@ -29,14 +29,14 @@ jobs:
         repository: munki/munki
 
     - name: Install Apple Xcode certificates
-      uses: apple-actions/import-codesign-certs@8f3fb608891dd2244cdab3d69cd68c0d37a7fe93 # v2.0.0
+      uses: apple-actions/import-codesign-certs@v7
       with:
         keychain-password: ${{ github.run_id }}
         p12-file-base64: ${{ secrets.APP_CERTIFICATES_P12_MAOS }}
         p12-password: ${{ secrets.APP_CERTIFICATES_P12_PASSWORD_MAOS }}
 
     - name: Install Apple Installer certificates
-      uses: apple-actions/import-codesign-certs@8f3fb608891dd2244cdab3d69cd68c0d37a7fe93 # v2.0.0
+      uses: apple-actions/import-codesign-certs@v7
       with:
         create-keychain: false # do not create a new keychain for this value
         keychain-password: ${{ github.run_id }}
