@@ -70,7 +70,7 @@ jobs:
 
     - name: Create Release
       id: create_release
-      uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844 # v0.1.15
+      uses: softprops/action-gh-release@v3.2.0
       with:
         name: Munki v${{env.MUNKI_VERSION}}
         tag_name: v${{env.MUNKI_VERSION}}
