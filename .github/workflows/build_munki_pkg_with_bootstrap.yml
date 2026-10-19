@@ -63,5 +63,5 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v7
       with:
-        name: munkitools-${{env.MUNKI_VERSION}}_with_bootstrap.pkg
-        path: munki/${{env.MUNKI_PKG_PATH}}
+        name: munkitools_with_bootstrap-${{env.MUNKI_VERSION}}.pkg
+        path: munki/munkitools-${{env.MUNKI_VERSION}}.pkg
