@@ -61,7 +61,7 @@ jobs:
         "$XCODE_PATH/Contents/Developer/usr/bin/stapler" staple "./munki/$MUNKI_PKG_PATH"
 
     - name: Upload artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: munkitools-${{env.MUNKI_VERSION}}_with_bootstrap.pkg
-          path: munki/${{env.MUNKI_PKG_PATH}}
+      uses: actions/upload-artifact@v7
+      with:
+        name: munkitools-${{env.MUNKI_VERSION}}_with_bootstrap.pkg
+        path: munki/${{env.MUNKI_PKG_PATH}}
