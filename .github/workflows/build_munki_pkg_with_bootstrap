@@ -1,0 +1,67 @@
+name: Build Swift Munki Package with Bootstrap (Manual)
+
+env:
+  APP_SIGNING_IDENTITY: "Developer ID Application: Mac Admins Open Source (T4SK8ZXCXG)"
+  INSTALLER_SIGNING_IDENTITY: "Developer ID Installer: Mac Admins Open Source (T4SK8ZXCXG)"
+  NOTARY_APP_PASSWORD: ${{ secrets.NOTARY_APP_PASSWORD_MAOS }}
+  REVISION: 6939d7c188fae593485931335a53843baba92dd1 #  -- hardcoded for now
+  XCODE_PATH: "/Applications/Xcode_26.6.app"
+
+on: [workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: macos-26
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.1.0
+      with:
+        fetch-depth: 0
+        path: munki-builds
+
+    - name: Checkout munki repo
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.1.0
+      with:
+        fetch-depth: 0
+        path: munki
+        ref: ${{env.REVISION}}
+        repository: munki/munki
+
+    - name: Install Apple Xcode certificates
+      uses: apple-actions/import-codesign-certs@5142e029c445c10ffc7149d172e540235a065466 # v7
+      with:
+        keychain-password: ${{ github.run_id }}
+        p12-file-base64: ${{ secrets.APP_CERTIFICATES_P12_MAOS }}
+        p12-password: ${{ secrets.APP_CERTIFICATES_P12_PASSWORD_MAOS }}
+
+    - name: Install Apple Installer certificates
+      uses: apple-actions/import-codesign-certs@5142e029c445c10ffc7149d172e540235a065466 # v7
+      with:
+        create-keychain: false # do not create a new keychain for this value
+        keychain-password: ${{ github.run_id }}
+        p12-file-base64: ${{ secrets.PKG_CERTIFICATES_P12_MAOS }}
+        p12-password: ${{ secrets.PKG_CERTIFICATES_P12_PASSWORD_MAOS }}
+
+    - name: Set Xcode Version
+      run: sudo xcode-select -s "$XCODE_PATH"
+
+    - name: Build munki package
+      run: |
+        cd ./munki
+        ./code/tools/make_swift_munki_pkg.sh -B -P -S "$APP_SIGNING_IDENTITY" -s "$INSTALLER_SIGNING_IDENTITY"
+        echo "MUNKI_PKG_PATH=$(find . -type f -name "*.pkg")" >> $GITHUB_ENV
+        echo "MUNKI_VERSION=$(find . -type f -name "*.pkg" | sed 's/[^\-]*-//' | sed 's/\.[^.]*$//')" >> $GITHUB_ENV
+    
+    - name: Notarize and staple package
+      id: notarize_and_staple
+      run: |
+        "$XCODE_PATH/Contents/Developer/usr/bin/notarytool" store-credentials --apple-id "opensource@macadmins.io" --team-id "T4SK8ZXCXG" --password "$NOTARY_APP_PASSWORD" munki
+        "$XCODE_PATH/Contents/Developer/usr/bin/notarytool" submit "./munki/$MUNKI_PKG_PATH" --keychain-profile "munki" --wait
+        "$XCODE_PATH/Contents/Developer/usr/bin/stapler" staple "./munki/$MUNKI_PKG_PATH"
+
+    - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: munkitools-${{env.MUNKI_VERSION}}_with_bootstrap.pkg
+          path: munki/${{env.MUNKI_PKG_PATH}}
